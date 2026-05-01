@@ -1,19 +1,30 @@
-export default function CaptionEditor({ tone, onToneChange, caption, onCaptionChange, onGenerate, loading }) {
+export default function CaptionEditor({ tone, onToneChange, caption, onCaptionChange, onGenerate, loading, error }) {
   return (
     <div className="card flex flex-col gap-5">
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <label htmlFor="tone-input" className="block text-sm font-medium text-gray-300 mb-2">
           ¿Cómo quieres el caption?
         </label>
         <input
+          id="tone-input"
           type="text"
           value={tone}
           onChange={(e) => onToneChange(e.target.value)}
-          placeholder='Ej: "inspiracional", "humorístico", "informativo", "atractivo y entretenido"'
+          placeholder='Ej: "inspiracional", "humorístico", "informativo"'
           className="input-field"
           disabled={loading}
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck="false"
         />
       </div>
+
+      {error && (
+        <div className="error-banner">
+          <span className="shrink-0">⚠️</span>
+          <span>{error}</span>
+        </div>
+      )}
 
       <button
         onClick={onGenerate}
@@ -32,10 +43,12 @@ export default function CaptionEditor({ tone, onToneChange, caption, onCaptionCh
 
       {caption !== null && (
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Caption generado <span className="text-gray-500 font-normal">(puedes editarlo)</span>
+          <label htmlFor="caption-textarea" className="block text-sm font-medium text-gray-300 mb-2">
+            Caption generado{' '}
+            <span className="text-gray-500 font-normal">(puedes editarlo)</span>
           </label>
           <textarea
+            id="caption-textarea"
             value={caption}
             onChange={(e) => onCaptionChange(e.target.value)}
             rows={7}
@@ -53,7 +66,7 @@ export default function CaptionEditor({ tone, onToneChange, caption, onCaptionCh
 
 function Spinner() {
   return (
-    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+    <svg className="animate-spin h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
     </svg>
