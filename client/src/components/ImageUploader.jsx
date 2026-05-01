@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_SIZE_MB = 8
 
 export default function ImageUploader({ onImageSelect, image }) {
   const inputRef = useRef(null)
@@ -12,8 +13,8 @@ export default function ImageUploader({ onImageSelect, image }) {
       setError('Formato no válido. Usa JPG, PNG o WEBP.')
       return false
     }
-    if (file.size > 8 * 1024 * 1024) {
-      setError('La imagen no puede superar 8 MB.')
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      setError(`La imagen no puede superar ${MAX_SIZE_MB} MB.`)
       return false
     }
     setError('')
@@ -42,12 +43,13 @@ export default function ImageUploader({ onImageSelect, image }) {
 
   function handleChange(e) {
     handleFile(e.target.files[0])
+    // Reset para permitir seleccionar el mismo archivo de nuevo
+    e.target.value = ''
   }
 
   function handleRemove() {
     onImageSelect(null)
     setError('')
-    if (inputRef.current) inputRef.current.value = ''
   }
 
   if (image) {
@@ -55,13 +57,16 @@ export default function ImageUploader({ onImageSelect, image }) {
       <div className="card flex flex-col items-center gap-4">
         <img
           src={URL.createObjectURL(image)}
-          alt="Preview"
-          className="w-full max-h-72 object-contain rounded-lg"
+          alt="Preview de la imagen seleccionada"
+          className="w-full max-h-64 sm:max-h-80 object-contain rounded-lg"
         />
-        <div className="flex items-center justify-between w-full">
-          <p className="text-sm text-gray-400 truncate max-w-[70%]">{image.name}</p>
-          <button onClick={handleRemove} className="text-sm text-red-400 hover:text-red-300 transition-colors">
-            Quitar imagen
+        <div className="flex items-center justify-between w-full gap-2">
+          <p className="text-sm text-gray-400 truncate">{image.name}</p>
+          <button
+            onClick={handleRemove}
+            className="text-sm text-red-400 hover:text-red-300 transition-colors shrink-0 min-h-[44px] px-2"
+          >
+            Quitar
           </button>
         </div>
       </div>
@@ -75,22 +80,28 @@ export default function ImageUploader({ onImageSelect, image }) {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
+        aria-label="Área para subir imagen"
         className={`
           border-2 border-dashed rounded-xl p-10 flex flex-col items-center justify-center
           cursor-pointer transition-colors duration-200 select-none
           ${dragging
             ? 'border-cycle-orange bg-cycle-orange/10'
-            : 'border-carbon-500 hover:border-cycle-orange hover:bg-carbon-700'}
+            : 'border-carbon-500 hover:border-cycle-orange hover:bg-carbon-700 active:bg-carbon-700'}
         `}
       >
-        <div className="text-5xl mb-4">🚴</div>
-        <p className="text-white font-semibold text-center">
-          Arrastra tu imagen aquí
+        <div className="text-5xl mb-4 pointer-events-none">🚴</div>
+        <p className="text-white font-semibold text-center pointer-events-none">
+          Sube tu imagen
         </p>
-        <p className="text-gray-500 text-sm mt-1 text-center">
-          o haz clic para seleccionar
+        <p className="text-gray-500 text-sm mt-1 text-center pointer-events-none">
+          Arrastra o toca para seleccionar
         </p>
-        <p className="text-gray-600 text-xs mt-3">JPG, PNG, WEBP · Máx. 8 MB</p>
+        <p className="text-gray-600 text-xs mt-3 pointer-events-none">
+          JPG · PNG · WEBP · Máx. {MAX_SIZE_MB} MB
+        </p>
       </div>
 
       {error && (
@@ -103,6 +114,7 @@ export default function ImageUploader({ onImageSelect, image }) {
         accept="image/jpeg,image/png,image/webp"
         onChange={handleChange}
         className="hidden"
+        aria-hidden="true"
       />
     </div>
   )

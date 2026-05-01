@@ -5,10 +5,19 @@
 @layer base {
   body {
     @apply bg-carbon-900 text-white antialiased;
+    /* Evita scroll horizontal en móvil */
+    overflow-x: hidden;
   }
 
   * {
     @apply box-border;
+    /* Elimina highlight azul al tocar en iOS */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Evita zoom automático en inputs en iOS (requiere font-size >= 16px) */
+  input, textarea, select {
+    font-size: 16px;
   }
 }
 
@@ -16,21 +25,36 @@
   .btn-primary {
     @apply bg-cycle-orange hover:bg-cycle-orange-light active:bg-cycle-orange-dark
            text-white font-semibold px-6 py-3 rounded-lg
-           transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+           transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+           /* Mínimo 44px de alto para touch targets en iOS */
+           min-h-[44px]
+           /* Evita doble tap zoom en Safari */
+           touch-action-manipulation;
+    -webkit-appearance: none;
   }
 
   .btn-secondary {
     @apply bg-carbon-600 hover:bg-carbon-500 text-white font-medium px-6 py-3
-           rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+           rounded-lg transition-colors duration-200 disabled:opacity-50
+           disabled:cursor-not-allowed min-h-[44px];
+    -webkit-appearance: none;
   }
 
   .card {
-    @apply bg-carbon-800 rounded-xl border border-carbon-600 p-6;
+    @apply bg-carbon-800 rounded-xl border border-carbon-600 p-5 sm:p-6;
   }
 
   .input-field {
     @apply bg-carbon-700 border border-carbon-500 text-white placeholder-gray-500
            rounded-lg px-4 py-3 w-full focus:outline-none focus:border-cycle-orange
-           transition-colors duration-200;
+           transition-colors duration-200 min-h-[44px];
+    -webkit-appearance: none;
+    /* Evita zoom en iOS */
+    font-size: 16px;
+  }
+
+  .error-banner {
+    @apply flex items-start gap-2 bg-red-900/40 border border-red-700
+           text-red-300 text-sm px-4 py-3 rounded-lg;
   }
 }
