@@ -26,10 +26,8 @@
     @apply bg-cycle-orange hover:bg-cycle-orange-light active:bg-cycle-orange-dark
            text-white font-semibold px-6 py-3 rounded-lg
            transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed
-           /* Mínimo 44px de alto para touch targets en iOS */
-           min-h-[44px]
-           /* Evita doble tap zoom en Safari */
-           touch-action-manipulation;
+           min-h-[44px];
+    touch-action: manipulation;
     -webkit-appearance: none;
   }
 
