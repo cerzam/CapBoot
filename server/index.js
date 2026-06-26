@@ -8,7 +8,8 @@ import publishRouter from './routes/publish.js'
 const app = express()
 const PORT = process.env.PORT || 3001
 
-app.use(cors({ origin: 'http://localhost:5173' }))
+const isProd = process.env.NODE_ENV === 'production'
+app.use(cors({ origin: isProd ? '*' : 'http://localhost:5173' }))
 app.use(express.json({ limit: '20mb' }))
 app.use(express.urlencoded({ extended: true, limit: '20mb' }))
 
@@ -21,6 +22,12 @@ app.use('/api/publish', publishRouter)
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', version: '1.0.0' })
 })
+
+if (isProd) {
+  const clientDist = path.resolve('client', 'dist')
+  app.use(express.static(clientDist))
+  app.get('*', (_req, res) => res.sendFile(path.join(clientDist, 'index.html')))
+}
 
 app.listen(PORT, () => {
   console.log(`CyclePost server corriendo en http://localhost:${PORT}`)
