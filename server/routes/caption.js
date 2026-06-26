@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import multer from 'multer'
-import { generateCaption } from '../services/anthropicService.js'
+import { generateCaption } from '../services/groqService.js'
 
 const router = Router()
 
@@ -33,8 +33,8 @@ router.post('/', upload.single('image'), async (req, res) => {
     const caption = await generateCaption(imageBase64, req.file.mimetype, tone.trim())
     res.json({ caption })
   } catch (err) {
-    console.error('Error Anthropic:', err.message)
-    res.status(500).json({ error: 'Error al generar el caption. Verifica tu ANTHROPIC_API_KEY.' })
+    console.error('Error Groq:', err.message)
+    res.status(500).json({ error: 'Error al generar el caption. Verifica tu GROQ_API_KEY.' })
   }
 })
 
